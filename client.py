@@ -1,33 +1,39 @@
 import requests
+import json
 
-BASE_URL = "http://127.0.0.1:8000"
-HEADERS = {"x-api-key": "secret123"}  # required header
+BASE = "http://127.0.0.1:8000"
 
+def call_echo():
+    url = f"{BASE}/echo/123"
+    params = {
+        "status": 201,   # tell the server which status code to use in the response
+        "search": "widgets",
+        "page": "2",
+    }
+    headers = {
+        "x-api-key": "demo-key-456",
+        "X-Custom-Header": "HelloFromClient",
+    }
+    cookies = {
+        "session_id": "abc123",
+    }
+    payload = {
+        "message": "Hello, Echo Server!",
+        "items": [1, 2, 3],
+        "active": True,
+    }
 
-def test_get():
-    r = requests.get(f"{BASE_URL}/items", headers=HEADERS)
-    print("GET:", r.status_code, r.json())
+    r = requests.post(url, params=params, headers=headers, cookies=cookies, json=payload)
 
-
-def test_post():
-    data = {"name": "Apple", "price": 1.99}
-    r = requests.post(f"{BASE_URL}/items", json=data, headers=HEADERS)
-    print("POST:", r.status_code, r.json())
-
-
-def test_put():
-    data = {"price": 2.49}
-    r = requests.put(f"{BASE_URL}/items/1", json=data, headers=HEADERS)
-    print("PUT:", r.status_code, r.json())
-
-
-def test_delete():
-    r = requests.delete(f"{BASE_URL}/items/1", headers=HEADERS)
-    print("DELETE:", r.status_code, r.json())
-
+    print("Status:", r.status_code)
+    print("Response headers:", dict(r.headers))
+    try:
+        data = r.json()
+        print("Response JSON:")
+        print(json.dumps(data, indent=2))
+    except Exception:
+        print("Response Text:")
+        print(r.text)
 
 if __name__ == "__main__":
-    test_get()
-    test_post()
-    test_put()
-    test_delete()
+    call_echo()
