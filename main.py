@@ -1,42 +1,103 @@
-# --- Basic Data Types ---
-integer_var: int = 42
-float_var: float = 3.14
-complex_var: complex = 2 + 3j
-boolean_var: bool = True
-string_var: str = "Hello, world!"
+import json
 
-print("Integer:", integer_var, "| Type:", type(integer_var))
-print("Float:", float_var, "| Type:", type(float_var))
-print("Complex number:", complex_var, "| Type:", type(complex_var))
-print("Boolean:", boolean_var, "| Type:", type(boolean_var))
-print("String:", string_var, "| Type:", type(string_var))
+def build_data_dict():
+    """
+    Build a dictionary containing examples of many Python data types.
+    """
+    integer_var = 42
+    float_var = 3.14
+    complex_var = str(2 + 3j)  # JSON can't store complex numbers directly
+    boolean_var = True
+    string_var = "Hello, world!"
+    list_var = [1, "text", 3.14, True]
+    tuple_var = (10, "tuple", False)
+    set_var = {1, 2, 3}
+    frozenset_var = frozenset({4, 5, 6})
+    dict_var = {"name": "Alice", "age": 30, "is_active": True}
+    bytes_var = b"byte string"
+    bytearray_var = bytearray(b"mutable bytes")
+    memoryview_var = memoryview(b"memory")
+    none_var = None
+    range_var = range(5)
 
-# --- Collection Types ---
-list_var: list = [1, "text", 3.14, True]
-tuple_var: tuple = (10, "tuple", False)
-set_var: set = {1, 2, 3, 3}
-frozenset_var: frozenset = frozenset({4, 5, 6})
-dict_var: dict = {"name": "Alice", "age": 30, "is_active": True}
+    data = {
+        "integer": integer_var,
+        "float": float_var,
+        "complex": complex_var,
+        "boolean": boolean_var,
+        "string": string_var,
+        "list": list_var,
+        "tuple": tuple_var,
+        "set": list(set_var),
+        "frozenset": list(frozenset_var),
+        "dict": dict_var,
+        "bytes": bytes_var.decode("utf-8"),
+        "bytearray": bytearray_var.decode("utf-8"),
+        "memoryview": memoryview_var.tobytes().decode("utf-8"),
+        "none": none_var,
+        "range": list(range_var)
+    }
 
-print("\nList:", list_var, "| Type:", type(list_var))
-print("Tuple:", tuple_var, "| Type:", type(tuple_var))
-print("Set:", set_var, "| Type:", type(set_var))
-print("Frozenset:", frozenset_var, "| Type:", type(frozenset_var))
-print("Dictionary:", dict_var, "| Type:", type(dict_var))
+    return data
 
-# --- Binary and Bytes ---
-bytes_var: bytes = b"byte string"
-bytearray_var: bytearray = bytearray(b"mutable bytes")
-memoryview_var: memoryview = memoryview(b"memory")
 
-print("\nBytes:", bytes_var, "| Type:", type(bytes_var))
-print("Bytearray:", bytearray_var, "| Type:", type(bytearray_var))
-print("Memoryview (as bytes):", memoryview_var.tobytes(), "| Type:", type(memoryview_var))
+def convert_to_json_string():
+    """
+    Converts the data dictionary to a JSON string using json.dumps().
+    Prints the JSON string and its type.
+    """
+    data = build_data_dict()
+    json_string = json.dumps(data, indent=4)
+    print("JSON String Version:")
+    print(json_string)
+    print("Type:", type(json_string), "\n")
+    return json_string
 
-# --- NoneType ---
-none_var: type(None) = None
-print("\nNoneType:", none_var, "| Type:", type(none_var))
 
-# --- Range and Other Useful Built-ins ---
-range_var: range = range(5)
-print("\nRange:", list(range_var), "| Type:", type(range_var))
+def convert_to_json_file():
+    """
+    Converts the data dictionary to JSON and writes it to a file using json.dump().
+    Prints confirmation and type.
+    """
+    data = build_data_dict()
+    with open("data_output.json", "w") as file:
+        json.dump(data, file, indent=4)
+    print("JSON File Version written to 'data_output.json'")
+    print("Type:", type(data), "\n")
+
+
+def convert_back_from_json():
+    """
+    Reads the JSON file and reconstructs the Python data types as best as possible.
+    Prints the reconstructed dictionary and shows how types were restored.
+    """
+    with open("data_output.json", "r") as file:
+        json_data = json.load(file)
+
+    reconstructed = {
+        "integer": int(json_data["integer"]),
+        "float": float(json_data["float"]),
+        "complex": complex(json_data["complex"].replace(" ", "")),  # from string "(2+3j)"
+        "boolean": bool(json_data["boolean"]),
+        "string": str(json_data["string"]),
+        "list": list(json_data["list"]),
+        "tuple": tuple(json_data["tuple"]),
+        "set": set(json_data["set"]),
+        "frozenset": frozenset(json_data["frozenset"]),
+        "dict": dict(json_data["dict"]),
+        "bytes": bytes(json_data["bytes"], "utf-8"),
+        "bytearray": bytearray(json_data["bytearray"], "utf-8"),
+        "memoryview": memoryview(bytes(json_data["memoryview"], "utf-8")),
+        "none": json_data["none"],  # already None
+        "range": range(len(json_data["range"]))  # reconstructs based on length
+    }
+
+    print("\nReconstructed Python Object:")
+    for key, value in reconstructed.items():
+        print(f"{key}: {value} | Type: {type(value)}")
+
+
+# --- Run all conversions ---
+json_string = convert_to_json_string()
+convert_to_json_file()
+convert_back_from_json()
