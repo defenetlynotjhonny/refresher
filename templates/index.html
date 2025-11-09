@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Echo Web App</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="/static/styles.css" rel="stylesheet" />
+</head>
+<body>
+  <div class="container">
+    <h1>Echo Web App</h1>
+    <p>This page calls a single FastAPI endpoint and displays all request/response details.</p>
+
+    <div class="controls">
+      <label>
+        Item ID:
+        <input id="itemId" type="number" value="123" />
+      </label>
+      <label>
+        Status:
+        <input id="statusCode" type="number" value="201" />
+      </label>
+      <button id="sendBtn">Send Request</button>
+    </div>
+
+    <details class="details">
+      <summary>Advanced Options (optional)</summary>
+      <div class="grid">
+        <div>
+          <h3>Query Params (JSON)</h3>
+          <textarea id="queryJson" rows="6">{ "search": "widgets", "page": "2" }</textarea>
+        </div>
+        <div>
+          <h3>Headers (JSON)</h3>
+          <textarea id="headersJson" rows="6">{ "x-api-key": "demo-key-456", "X-Custom-Header": "HelloFromBrowser" }</textarea>
+        </div>
+        <div>
+          <h3>Body (JSON)</h3>
+          <textarea id="bodyJson" rows="6">{ "message": "Hello from the page!", "items": [1,2,3], "active": true }</textarea>
+        </div>
+      </div>
+    </details>
+
+    <h2>Result</h2>
+    <pre id="output" class="codeblock">Click "Send Request"…</pre>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
